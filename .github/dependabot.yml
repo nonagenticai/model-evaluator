@@ -8,6 +8,10 @@ updates:
       uv:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+    # The spaCy model is a direct URL wheel (see [tool.uv.sources]); the uv
+    # updater cannot resolve a URL source and fails the whole run on it.
+    ignore:
+      - dependency-name: en-core-web-sm
   - package-ecosystem: github-actions
     directory: /
     schedule: { interval: weekly, day: monday }
