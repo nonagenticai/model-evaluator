@@ -1,17 +1,10 @@
 version: 2
 updates:
-  - package-ecosystem: uv
-    directory: /
-    schedule: { interval: weekly, day: monday }
-    open-pull-requests-limit: 5
-    groups:
-      uv:
-        patterns: ["*"]
-        update-types: ["minor", "patch"]
-    # The spaCy model is a direct URL wheel (see [tool.uv.sources]); the uv
-    # updater cannot resolve a URL source and fails the whole run on it.
-    ignore:
-      - dependency-name: en-core-web-sm
+  # The `uv` ecosystem is deliberately absent: this project pins the spaCy model
+  # `en-core-web-sm` to a GitHub release wheel ([tool.uv.sources]). Dependabot's uv
+  # updater resolves the whole lock, classifies that URL as a private source and
+  # fails the run with `private_source_authentication_failure`. Python dependencies
+  # are refreshed with `uv lock --upgrade` instead.
   - package-ecosystem: github-actions
     directory: /
     schedule: { interval: weekly, day: monday }
