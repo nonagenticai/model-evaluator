@@ -1,0 +1,39 @@
+services:
+  model-evaluator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: model-evaluator
+    environment:
+      MODEL_EVALUATOR_ENVIRONMENT: development
+      MODEL_EVALUATOR_LOG_FORMAT: json
+      MODEL_EVALUATOR_DATABASE_URL: postgresql+psycopg://postgres:postgres@db:5432/model_evaluator
+      MODEL_EVALUATOR_DATA_COLLECTOR_URL: http://host.docker.internal:8151
+      MODEL_EVALUATOR_MODEL_REGISTRY_URL: http://host.docker.internal:8155
+    ports:
+      - "8154:8154"
+    depends_on:
+      - db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8154/health/ready', timeout=5).read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  db:
+    image: postgres:18-alpine
+    container_name: model-evaluator-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: model_evaluator
+    ports:
+      - "5456:5432"
+    volumes:
+      - model_evaluator_db_data:/var/lib/postgresql/data
+
+volumes:
+  model_evaluator_db_data:
