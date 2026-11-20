@@ -11,7 +11,7 @@ Coordinates the full evaluation pipeline:
 import json
 import time
 from datetime import UTC, datetime
-from typing import Any, cast
+from typing import Any
 from uuid import UUID
 
 import httpx
@@ -284,7 +284,7 @@ class EvalService:
                 )
                 scoring_profile: ScoringProfile = "default"
             else:
-                scoring_profile = cast(ScoringProfile, raw_profile)
+                scoring_profile = raw_profile
             metrics = self.metrics_service.compute(
                 results, latencies, scoring_profile=scoring_profile
             )
